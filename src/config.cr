@@ -53,5 +53,14 @@ ActionController::Session.configure do |settings|
   settings.secure = running_in_production
 end
 
+# InfluxDB connection
+require "flux"
+Flux.configure do |settings|
+  settings.host = ENV["INFLUX_HOST"]? || abort "INFLUX_HOST env var not set"
+  settings.api_key = ENV["INFLUX_API_KEY"]? || abort "INFLUX_API_KEY env var not set"
+  settings.org = ENV["INFLUX_ORG"]? || "aca"
+  settings.bucket = ENV["INFLUX_BUCKET"]? || "place"
+end
+
 APP_NAME = "Place-API"
 VERSION  = "1.0.0"
