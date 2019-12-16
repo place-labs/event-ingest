@@ -47,11 +47,11 @@ end
 # Configure session cookies
 # NOTE:: Change these from defaults
 ActionController::Session.configure do |settings|
-  settings.key = ENV["COOKIE_SESSION_KEY"]? || "_spider_gazelle_"
+  settings.key = ENV["COOKIE_SESSION_KEY"]? || "_place_api_"
   settings.secret = ENV["COOKIE_SESSION_SECRET"]? || "4f74c0b358d5bab4000dd3c75465dc2c"
   # HTTPS only:
   settings.secure = running_in_production
 end
 
-APP_NAME = "Spider-Gazelle"
+APP_NAME = "Place-API"
 VERSION  = "1.0.0"
