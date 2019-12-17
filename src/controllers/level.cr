@@ -114,7 +114,7 @@ class Level < Application
   # Tempory endpoint for providing aggregated presence stats.
   get "/:id/presence", :presence do
     level = params["id"]
-    locations = LOCATIONS[level]
+    locations = LOCATIONS[level]?
 
     head :not_found unless locations
 
