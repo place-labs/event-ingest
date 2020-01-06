@@ -111,13 +111,6 @@ class Level < Application
     ]
   }
 
-  # Quick hack to work around angular attempting an options request
-  options "/:id/presence", :presence_preflight do
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET"
-    head :no_content
-  end
-
   # Tempory endpoint for providing aggregated presence stats.
   get "/:id/presence", :presence do
     level = params["id"]
