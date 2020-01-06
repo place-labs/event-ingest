@@ -54,7 +54,6 @@ struct PlaceAPI::Event
   # Provides the set of event attributes that are suitable for indexing.
   def tags
     {
-      evt: type,
       org: organisation,
       bld: building,
       lvl: level,
