@@ -2,7 +2,6 @@ require "json"
 
 # PlaceAPI event stream message.
 # TODO move to a standalone lib
-# TODO implement tag / field annotation and generate types for these.
 struct PlaceAPI::Event
   include JSON::Serializable
 
@@ -40,7 +39,7 @@ struct PlaceAPI::Event
 
   # Event value. Generally associated state information.
   @[JSON::Field(key: "val")]
-  getter value : Int32 | Int64 | Float32 | Float64 | String | Bool
+  getter value : Float64
 
   # Event reference. Supplementry info supporting the event value.
   @[JSON::Field(key: "ref", emit_null: true)]
