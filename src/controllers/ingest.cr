@@ -30,7 +30,7 @@ class Ingest < Application
 
   # Saves an event.
   private def store(event : PlaceAPI::Event)
-    point = InfluxDB::Point[event.type, event.timestamp, **event.fields]
+    point = InfluxDB::Point.new! event.type, event.timestamp, **event.fields
     point.tag **event.tags
     Flux.write point
   end
