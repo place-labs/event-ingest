@@ -11,7 +11,7 @@ struct PlaceAPI::Event
 
   # Unix timestamp (millisecond accurate) of event occurance.
   @[JSON::Field(key: "uts", converter: Time::EpochMillisConverter)]
-  getter timestamp : Time
+  getter time : Time
 
   # A globally unique identifier for the originating organisation.
   @[JSON::Field(key: "org")]
