@@ -30,14 +30,14 @@ class Ingest < Application
 
   # Saves an event.
   private def store(event : PlaceAPI::Event)
-    # Insert up to 0.1ms of noise to each point. Events are stored based on a
+    # Insert up to 1ms of noise to each point. Events are stored based on a
     # unique keying of time and associated tag set. There are cases where
     # multiple events may occur within the same millisecond (particularly from
     # sources only supporting course time granularity on the original event -
     # e.g. a bulk import of manually entered data), resulting in overwritten
     # value. This de-dups and also provide unique timestamps that can be used to
-    # pivot and restor original point associations across fields.
-    ts = event.time + Random.rand(1e5).nanoseconds
+    # pivot and restore original point associations across fields.
+    ts = event.time + Random.rand(1e6).nanoseconds
 
     point = InfluxDB::Point.new! event.type, ts, **event.fields
     point.tag **event.tags
