@@ -7,7 +7,6 @@ running_in_production = ENV["SG_ENV"]? == "production"
 # Logging configuration
 ActionController::Logger.add_tag request_id
 ActionController::Logger.add_tag client_ip
-# ActionController::Logger.add_tag user_id
 
 # Filter out sensitive params that shouldn't be logged
 filter_params = ["password", "bearer_token"]
@@ -32,27 +31,6 @@ ActionController::Server.before(
   HTTP::CompressHandler.new
 )
 
-# Optional support for serving of static assests
-static_file_path = ENV["PUBLIC_WWW_PATH"]? || "./www"
-if File.directory?(static_file_path)
-  # Optionally add additional mime types
-  ::MIME.register(".yaml", "text/yaml")
-
-  # Check for files if no paths matched in your application
-  ActionController::Server.before(
-    ::HTTP::StaticFileHandler.new(static_file_path, directory_listing: false)
-  )
-end
-
-# Configure session cookies
-# NOTE:: Change these from defaults
-ActionController::Session.configure do |settings|
-  settings.key = ENV["COOKIE_SESSION_KEY"]? || "_place_api_"
-  settings.secret = ENV["COOKIE_SESSION_SECRET"]? || "4f74c0b358d5bab4000dd3c75465dc2c"
-  # HTTPS only:
-  settings.secure = running_in_production
-end
-
 # InfluxDB connection
 require "flux"
 Flux.configure do |settings|
@@ -62,5 +40,9 @@ Flux.configure do |settings|
   settings.bucket = ENV["INFLUX_BUCKET"]? || "place"
 end
 
+# Tempory auth setup
+# TODO: implement auth service with short-lived tokens.
+API_KEY = ENV["PLACE_API_KEY"]? || abort "PLACE_API_KEY not set in ENV"
+
 APP_NAME = "Place-API"
-VERSION  = "1.0.0"
+VERSION  = `shards version`
