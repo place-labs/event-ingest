@@ -38,6 +38,7 @@ Flux.configure do |settings|
   settings.api_key = ENV["INFLUX_API_KEY"]? || abort "INFLUX_API_KEY env var not set"
   settings.org = ENV["INFLUX_ORG"]? || "aca"
   settings.bucket = ENV["INFLUX_BUCKET"]? || "place"
+  settings.logger = logger
 end
 
 # Tempory auth setup
