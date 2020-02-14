@@ -42,7 +42,7 @@ class Ingest < Application
     noise = (loc_hash ^ (loc_hash >> 20) ^ (loc_hash >> 40)) & 0xfffff
     ts = event.time + noise.nanoseconds
 
-    point = InfluxDB::Point.new! event.type, ts, **event.fields
+    point = Flux::Point.new! event.type, ts, **event.fields
     point.tag **event.tags
 
     Flux.write point
