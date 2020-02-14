@@ -17,9 +17,9 @@ class Level < Application
     end
 
     def self.from(params)
-      from = params["from"]?.try { |t| Time.parse_utc t, "%s" }
-      to = params["to"]?.try { |t| Time.parse_utc t, "%s" }
-      at = params["at"]?.try { |t| Time.parse_utc t, "%s" }
+      from = params["from"]?.try { |t| Time.unix_ms t.to_i64 }
+      to = params["to"]?.try { |t| Time.unix_ms t.to_i64 }
+      at = params["at"]?.try { |t| Time.unix_ms t.to_i64 }
 
       if from && to && at
         Aggregate.new from, to, at
