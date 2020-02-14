@@ -46,4 +46,4 @@ end
 API_KEY = ENV["PLACE_API_KEY"]? || abort "PLACE_API_KEY not set in ENV"
 
 APP_NAME = "Place-API"
-VERSION  = `shards version`
+VERSION  = {{ `shards version #{__DIR__}`.chomp.stringify }}
