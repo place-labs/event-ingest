@@ -32,7 +32,7 @@ class Level < Application
   end
 
   # Tempory endpoint for providing aggregated presence stats.
-  get "/:id/presence", :presence do
+  get "/:id/presence" do
     level = params["id"]
     include_locations = params["include_locations"]? == "true"
     window = Window.from(params) || Window::Instant.new(Time.utc)
@@ -68,8 +68,10 @@ class Level < Application
       tables = Flux.query query do |row|
         { row["loc"], row["val"].to_f }
       end
-      locations = tables.first.to_h
 
+      head :no_content if tables.empty?
+
+      locations = tables.first.to_h
       response = response.merge(value: locations.values.sum / locations.size.to_f)
       response = response.merge(locations: locations) if include_locations
     when Window::Aggregate
