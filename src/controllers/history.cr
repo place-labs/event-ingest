@@ -11,13 +11,23 @@ class History < Application
     if time
       time = Time::Format::RFC_3339.parse(time)
       head :bad_request if time > now
-
-      # Offset time slightly to ensure that if querying low time-granularity
-      # data (e.g. 9:30am observation) the correct observation is returned.
-      time += 5.milliseconds
     else
       time = now
     end
+
+    if value = lookup location, event, at: time
+      render json: { value: value }
+    else
+      head :no_content
+    end
+  end
+
+  # Lookup the value of a tracked param at a specified point in time. Returns
+  # nil if no data is availble.
+  def lookup(location : String, event : String, at time : Time) : Float64?
+    # Offset time slightly to ensure that if querying low time-granularity
+    # data (e.g. 9:30am observation) the correct observation is returned.
+    time += 5.milliseconds
 
     # OPTIMIZE: lookup level first and use this to filter before pivot
     query = <<-FLUX
@@ -34,10 +44,6 @@ class History < Application
       row["_value"].to_f
     end
 
-    head :no_content if response.empty?
-
-    render json: {
-      value: response.first.first
-    }
+    response.first.first unless response.empty?
   end
 end
