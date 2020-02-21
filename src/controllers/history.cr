@@ -11,6 +11,10 @@ class History < Application
     if time
       time = Time::Format::RFC_3339.parse(time)
       head :bad_request if time > now
+
+      # Offset time slightly to ensure that if querying low time-granularity
+      # data (e.g. 9:30am observation) the correct observation is returned.
+      time += 5.milliseconds
     else
       time = now
     end
