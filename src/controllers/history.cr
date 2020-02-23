@@ -15,7 +15,7 @@ class History < Application
       time = now
     end
 
-    if value = lookup location, event, at: time
+    if value = History.lookup location, event, at: time
       render json: { value: value }
     else
       head :no_content
@@ -24,7 +24,7 @@ class History < Application
 
   # Lookup the value of a tracked param at a specified point in time. Returns
   # nil if no data is availble.
-  def lookup(location : String, event : String, at time : Time) : Float64?
+  def self.lookup(location : String, event : String, at time : Time) : Float64?
     # Offset time slightly to ensure that if querying low time-granularity
     # data (e.g. 9:30am observation) the correct observation is returned.
     time += 5.milliseconds
