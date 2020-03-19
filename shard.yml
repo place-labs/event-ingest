@@ -10,7 +10,7 @@ dependencies:
   kilt:
     github: jeromegn/kilt
   flux:
-    github: aca-labs/flux
+    github: place-labs/flux
 
 development_dependencies:
   ameba:
