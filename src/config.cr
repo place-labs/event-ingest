@@ -35,14 +35,10 @@ require "flux"
 Flux.configure do |settings|
   settings.host = ENV["INFLUX_HOST"]? || abort "INFLUX_HOST env var not set"
   settings.api_key = ENV["INFLUX_API_KEY"]? || abort "INFLUX_API_KEY env var not set"
-  settings.org = ENV["INFLUX_ORG"]? || "aca"
-  settings.bucket = ENV["INFLUX_BUCKET"]? || "place"
+  settings.org = ENV["INFLUX_ORG"]? || "placeos"
+  settings.bucket = ENV["INFLUX_BUCKET"]? || "analytics"
   settings.logger = logger
 end
-
-# Tempory auth setup
-# TODO: implement auth service with short-lived tokens.
-API_KEY = ENV["PLACE_API_KEY"]? || abort "PLACE_API_KEY not set in ENV"
 
 # Optional support for serving of static assests
 if File.directory?(App::STATIC_FILE_PATH)

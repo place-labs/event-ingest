@@ -1,5 +1,5 @@
 module App
-  NAME    = "Spider-Gazelle"
+  NAME    = "Ingest"
   VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
 
   ENVIRONMENT = ENV["SG_ENV"]? || "development"
@@ -9,6 +9,10 @@ module App
   DEFAULT_PROCESS_COUNT = (ENV["SG_PROCESS_COUNT"]? || 1).to_i
 
   STATIC_FILE_PATH = ENV["PUBLIC_WWW_PATH"]? || "./www"
+
+  # Tempory auth setup
+  # TODO: implement auth service with short-lived tokens.
+  API_KEY = ENV["API_KEY"]? || abort "API_KEY env var not set"
 
   COOKIE_SESSION_KEY    = ENV["COOKIE_SESSION_KEY"]? || "_spider_gazelle_"
   COOKIE_SESSION_SECRET = ENV["COOKIE_SESSION_SECRET"]? || "4f74c0b358d5bab4000dd3c75465dc2c"
