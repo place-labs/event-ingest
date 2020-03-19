@@ -1,8 +1,7 @@
 # Application dependencies
 require "action-controller"
 require "active-model"
-
-running_in_production = ENV["SG_ENV"]? == "production"
+require "./constants"
 
 # Logging configuration
 ActionController::Logger.add_tag request_id
@@ -14,7 +13,7 @@ keeps_headers = ["X-Request-ID"]
 
 # Default log levels
 logger = ActionController::Base.settings.logger
-logger.level = running_in_production ? Logger::INFO : Logger::DEBUG
+logger.level = App.running_in_production? ? Logger::INFO : Logger::DEBUG
 
 # Application code
 require "./controllers/application"
@@ -26,7 +25,7 @@ require "action-controller/server"
 
 # Add handlers that should run before your application
 ActionController::Server.before(
-  ActionController::ErrorHandler.new(!running_in_production, keeps_headers),
+  ActionController::ErrorHandler.new(!App.running_in_production?, keeps_headers),
   ActionController::LogHandler.new(filter_params),
   HTTP::CompressHandler.new
 )
@@ -45,5 +44,22 @@ end
 # TODO: implement auth service with short-lived tokens.
 API_KEY = ENV["PLACE_API_KEY"]? || abort "PLACE_API_KEY not set in ENV"
 
-APP_NAME = "Place-API"
-VERSION  = {{ `shards version #{__DIR__}`.chomp.stringify }}
+# Optional support for serving of static assests
+if File.directory?(App::STATIC_FILE_PATH)
+  # Optionally add additional mime types
+  ::MIME.register(".yaml", "text/yaml")
+
+  # Check for files if no paths matched in your application
+  ActionController::Server.before(
+    ::HTTP::StaticFileHandler.new(App::STATIC_FILE_PATH, directory_listing: false)
+  )
+end
+
+# Configure session cookies
+# NOTE:: Change these from defaults
+ActionController::Session.configure do |settings|
+  settings.key = App::COOKIE_SESSION_KEY
+  settings.secret = App::COOKIE_SESSION_SECRET
+  # HTTPS only:
+  settings.secure = App.running_in_production?
+end

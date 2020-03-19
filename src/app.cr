@@ -1,10 +1,10 @@
 require "option_parser"
-require "./config"
+require "./constants"
 
 # Server defaults
-port = (ENV["SG_SERVER_PORT"]? || 3000).to_i
-host = ENV["SG_SERVER_HOST"]? || "127.0.0.1"
-process_count = (ENV["SG_PROCESS_COUNT"]? || 1).to_i
+port = App::DEFAULT_PORT
+host = App::DEFAULT_HOST
+process_count = App::DEFAULT_PROCESS_COUNT
 
 # Command line options
 OptionParser.parse(ARGV.dup) do |parser|
@@ -23,8 +23,20 @@ OptionParser.parse(ARGV.dup) do |parser|
   end
 
   parser.on("-v", "--version", "Display the application version") do
-    puts "#{APP_NAME} v#{VERSION}"
+    puts "#{App::NAME} v#{App::VERSION}"
     exit 0
+  end
+
+  parser.on("-c URL", "--curl=URL", "Perform a basic health check by requesting the URL") do |url|
+    begin
+      response = HTTP::Client.get url
+      exit 0 if (200..499).includes? response.status_code
+      puts "health check failed, received response code #{response.status_code}"
+      exit 1
+    rescue error
+      error.inspect_with_backtrace(STDOUT)
+      exit 2
+    end
   end
 
   parser.on("-h", "--help", "Show this help") do
@@ -34,7 +46,11 @@ OptionParser.parse(ARGV.dup) do |parser|
 end
 
 # Load the routes
-puts "Launching #{APP_NAME} v#{VERSION}"
+puts "Launching #{App::NAME} v#{App::VERSION}"
+
+# Requiring config here ensures that the option parser runs before
+# attempting to connect to databases etc.
+require "./config"
 server = ActionController::Server.new(port, host)
 
 # (process_count < 1) == `System.cpu_count` but this is not always accurate
@@ -71,4 +87,4 @@ server.run do
 end
 
 # Shutdown message
-puts "#{APP_NAME} leaps through the veldt\n"
+puts "#{App::NAME} leaps through the veldt\n"
