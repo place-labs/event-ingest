@@ -1,8 +1,8 @@
 require "json"
 
-# PlaceAPI event stream message.
+# PlaceOS Analytics event stream message.
 # TODO move to a standalone lib
-struct PlaceAPI::Event
+struct PlaceOS::Analytics::Event
   include JSON::Serializable
 
   # Event type.

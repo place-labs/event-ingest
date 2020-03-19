@@ -1,10 +1,11 @@
 require "flux"
-require "../place_api/event"
+require "../models/event"
 
 class Ingest < Application
   base "/ingest"
 
-  # Accepts Place API event stream objects as JSON lines within the event body.
+  # Accepts PlaceOS Analytics event stream objects as JSON lines within the
+  # event body.
   post "/", :batch_ingest do
     body = request.body
     if body
@@ -15,21 +16,21 @@ class Ingest < Application
     end
   end
 
-  # Accepts a stream of Place API events. Each message should contain a singular
-  # event for storage.
+  # Accepts a stream of PlaceOS Analytics events. Each message should contain a
+  # singular event for storage.
   ws "/", :stream_ingest do |socket|
     socket.on_message &->ingest(String)
   end
 
   # Parses a received event and stores it.
   private def ingest(event : String) : Nil
-    store PlaceAPI::Event.from_json event
+    store PlaceOS::Analytics::Event.from_json event
   rescue ex : JSON::ParseException
     logger.warn { "invalid event format: #{event}"}
   end
 
   # Saves an event.
-  private def store(event : PlaceAPI::Event)
+  private def store(event : PlaceOS::Analytics::Event)
     # InfluxDB stores points based on a unique keying of time, measure and tag
     # values. If multiple points share these they will be overwritten. This
     # occurs when events are sourced from an input with course time granularity
