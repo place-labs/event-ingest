@@ -37,6 +37,7 @@ Flux.configure do |settings|
   settings.api_key = ENV["INFLUX_API_KEY"]? || abort "INFLUX_API_KEY env var not set"
   settings.org = ENV["INFLUX_ORG"]? || "placeos"
   settings.bucket = ENV["INFLUX_BUCKET"]? || "analytics"
+  settings.ssl_no_verify = ENV["INFLUX_SSL_NO_VERIFY"]? == "true"
   settings.logger = logger
 end
 
